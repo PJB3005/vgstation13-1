@@ -856,7 +856,7 @@ obj/item/weapon/circuitboard/rdserver
 // Telecomms circuit boards:
 
 /obj/item/weapon/circuitboard/telecomms/receiver
-	name = "Circuit Board (Subspace Receiver)"
+	name = "Circuit Board (Telecomms Subspace Receiver)"
 	build_path = "/obj/machinery/telecomms/receiver"
 	board_type = MACHINE
 	origin_tech = Tc_PROGRAMMING + "=4;" + Tc_ENGINEERING + "=3;" + Tc_BLUESPACE + "=2"
@@ -868,7 +868,7 @@ obj/item/weapon/circuitboard/rdserver
 							"/obj/item/weapon/stock_parts/micro_laser" = 1)
 
 /obj/item/weapon/circuitboard/telecomms/hub
-	name = "Circuit Board (Hub Mainframe)"
+	name = "Circuit Board (Telecomms Hub Mainframe)"
 	build_path = "/obj/machinery/telecomms/hub"
 	board_type = MACHINE
 	origin_tech = Tc_PROGRAMMING + "=4;" + Tc_ENGINEERING + "=4"
@@ -879,7 +879,7 @@ obj/item/weapon/circuitboard/rdserver
 							"/obj/item/weapon/stock_parts/subspace/filter" = 2)
 
 /obj/item/weapon/circuitboard/telecomms/relay
-	name = "Circuit Board (Relay Mainframe)"
+	name = "Circuit Board (Telecomms Relay Mainframe)"
 	build_path = "/obj/machinery/telecomms/relay"
 	board_type = MACHINE
 	origin_tech = Tc_PROGRAMMING + "=3;" + Tc_ENGINEERING + "=4;" + Tc_BLUESPACE + "=3"
@@ -890,7 +890,7 @@ obj/item/weapon/circuitboard/rdserver
 							"/obj/item/weapon/stock_parts/subspace/filter" = 2)
 
 /obj/item/weapon/circuitboard/telecomms/bus
-	name = "Circuit Board (Bus Mainframe)"
+	name = "Circuit Board (Telecomms Bus Mainframe)"
 	build_path = "/obj/machinery/telecomms/bus"
 	board_type = MACHINE
 	origin_tech = Tc_PROGRAMMING + "=4;" + Tc_ENGINEERING + "=4"
@@ -901,7 +901,7 @@ obj/item/weapon/circuitboard/rdserver
 							"/obj/item/weapon/stock_parts/subspace/filter" = 1)
 
 /obj/item/weapon/circuitboard/telecomms/processor
-	name = "Circuit Board (Processor Unit)"
+	name = "Circuit Board (Telecomms Processor Unit)"
 	build_path = "/obj/machinery/telecomms/processor"
 	board_type = MACHINE
 	origin_tech = Tc_PROGRAMMING + "=4;" + Tc_ENGINEERING + "=4"
@@ -915,7 +915,7 @@ obj/item/weapon/circuitboard/rdserver
 							"/obj/item/weapon/stock_parts/subspace/amplifier" = 1)
 
 /obj/item/weapon/circuitboard/telecomms/server
-	name = "Circuit Board (Telecommunication Server)"
+	name = "Circuit Board (Telecomms Telecommunication Server)"
 	build_path = "/obj/machinery/telecomms/server"
 	board_type = MACHINE
 	origin_tech = Tc_PROGRAMMING + "=4;" + Tc_ENGINEERING + "=4"
@@ -926,7 +926,7 @@ obj/item/weapon/circuitboard/rdserver
 							"/obj/item/weapon/stock_parts/subspace/filter" = 1)
 
 /obj/item/weapon/circuitboard/telecomms/broadcaster
-	name = "Circuit Board (Subspace Broadcaster)"
+	name = "Circuit Board (Telecomms Subspace Broadcaster)"
 	build_path = "/obj/machinery/telecomms/broadcaster"
 	board_type = MACHINE
 	origin_tech = Tc_PROGRAMMING + "=4;" + Tc_ENGINEERING + "=4;" + Tc_BLUESPACE + "=2"

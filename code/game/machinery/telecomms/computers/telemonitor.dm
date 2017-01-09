@@ -9,7 +9,7 @@
 
 /obj/machinery/computer/telecomms/monitor
 	name = "Telecommunications Monitor"
-	icon_state = "comm_monitor"
+	icon_state = "comm_serv"
 	circuit = "/obj/item/weapon/circuitboard/comm_monitor"
 
 	var/screen = 0				// the screen number:
