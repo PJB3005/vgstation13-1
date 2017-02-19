@@ -1,6 +1,10 @@
 /obj/machinery/computer/telecomms/server
-	name = "telecommunications server monitor"
+	name = "telecommunications server log monitor"
+	desc = "The ability to see what the command staff was talking about at your fingertips."
 	icon_state = "comm_monitor"
+	circuit = "/obj/item/weapon/circuitboard/comm_server"
+	req_access = list(access_tcomsat)
+	light_color = LIGHT_COLOR_GREEN
 
 	var/screen = SCREEN_MAIN        // the screen number:
 	var/list/servers = list()       // the servers located by the computer
@@ -10,11 +14,6 @@
 	var/temp = ""                   // temporary feedback messages
 
 	var/universal_translate = FALSE // set to TRUE if it can translate nonhuman speech
-
-	circuit = "/obj/item/weapon/circuitboard/comm_server"
-
-	req_access = list(access_tcomsat)
-
 
 /obj/machinery/computer/telecomms/server/Destroy()
 	servers = null
@@ -53,7 +52,8 @@
 					<ul>
 				"}
 				for (var/obj/machinery/telecomms/T in servers)
-					var/ref = copytext("\ref[src]", 2, -1) // Cut out brackets.
+					 // Cut out brackets.
+					var/ref = copytext("\ref[src]", 2, -1)
 					dat += {"
 						<li>
 							<span class="code">[ref]</span>
@@ -69,7 +69,7 @@
 				dat += "<b>No servers detected. Scan for servers:</b> <a href='?src=\ref[src];scan=1'>Scan</a>"
 
 
-		if (SCREEN_SERVER)
+		if (SCREEN_SELECTED)
 			// --- Viewing Server ---
 			var/traffic = ""
 			if (SelectedServer.totaltraffic >= 1024)
@@ -89,7 +89,7 @@
 					</tr>
 					<tr>
 						<td><b>Currently Selected Server:</b></td>
-						<td class="right">[SelectedServer.id]</td>
+						<td class="right">[SelectedServer.name]</td>
 					</tr>
 					<tr>
 						<td><b>Total Recorded Traffic:</b></td>
@@ -204,15 +204,16 @@
 									<b>Output:</b>
 								</td>
 								<td>
-									"DivideByZeroError: \"[C.parameters["message"]]\"
+									[C.parameters["message"]]
 								</td>
 							</tr>
 						"}
 
 			dat += "</table>"
 
-	var/datum/browser/B = new(user, "\ref[src]", "Telecommunications Server Monitor", 575, 400, src)
-	B.add_stylesheet("logbrowser.css", 'code/game/machinery/telecomms/logbrowser.css')
+
+	var/datum/browser/B = new(user, "\ref[src]", "Telecommunications Server Log Monitor", 575, 400, src)
+	B.add_stylesheet("logbrowser.css", 'html/browser/logbrowser.css')
 	B.set_content(dat)
 	B.open()
 	temp = "&nbsp;"
@@ -230,7 +231,7 @@
 		var/obj/machinery/telecomms/T = locate(href_list["viewserver"]) in servers
 		if(T)
 			SelectedServer = T
-			screen = SCREEN_SERVER
+			screen = SCREEN_SELECTED
 		. = TRUE
 
 
@@ -292,38 +293,35 @@
 					servers.Add(T)
 
 			if (!servers.len)
-				set_temp("FAILED: UNABLE TO LOCATE SERVERS IN <span class='code'[network]</span>", BAD)
+				set_temp("FAILED: UNABLE TO LOCATE SERVERS IN <span class='code'>[network]</span>", BAD)
 			else
 				set_temp("[servers.len] SERVERS PROBED & BUFFERED", NEUTRAL)
 
 			screen = SCREEN_MAIN
 		. = TRUE
 
+	if (href_list["refresh"])
+		. = TRUE
+
 	if (.)
 		updateUsrDialog()
 
-/obj/machinery/computer/telecomms/server/attackby(var/obj/item/weapon/D as obj, var/mob/user as mob)
+/obj/machinery/computer/telecomms/server/attackby(var/obj/item/weapon/D, var/mob/user)
 	if (..())
 		return TRUE
 
 	updateUsrDialog()
 
 
-/obj/machinery/computer/telecomms/server/emag(mob/user)
+/obj/machinery/computer/telecomms/server/emag(var/mob/user)
 	if (!emagged)
 		playsound(get_turf(src), 'sound/effects/sparks4.ogg', 75, 1)
 		emagged = TRUE
 		req_access.Cut()
 		to_chat(user, "<span class='notice'>You you disable the security protocols</span>")
 		return TRUE
+		spark(src)
 
 
 /obj/machinery/computer/telecomms/server/proc/set_temp(var/message, var/class = NEUTRAL)
 	temp = "<span class='[class] tempmsg'>[message]</span>"
-
-
-#undef BAD
-#undef NEUTRAL
-
-#undef SCREEN_MAIN
-#undef SCREEN_SERVER

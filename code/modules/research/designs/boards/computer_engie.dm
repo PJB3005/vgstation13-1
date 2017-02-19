@@ -74,7 +74,7 @@
 //Tcomms
 
 /datum/design/comm_monitor
-	name = "Circuit Design (Telecommunications Monitoring Console)"
+	name = "Circuit Design (Telecommunications Network Monitoring Console)"
 	desc = "Allows for the construction of circuit boards used to build a telecommunications monitor."
 	id = "comm_monitor"
 	req_tech = list(Tc_PROGRAMMING = 3)
@@ -84,7 +84,7 @@
 	build_path = /obj/item/weapon/circuitboard/comm_monitor
 
 /datum/design/comm_server
-	name = "Circuit Design (Telecommunications Server Monitoring Console)"
+	name = "Circuit Design (Telecommunications Server Log Monitoring Console)"
 	desc = "Allows for the construction of circuit boards used to build a telecommunication server browser and monitor."
 	id = "comm_server"
 	req_tech = list(Tc_PROGRAMMING = 3)

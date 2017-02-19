@@ -219,7 +219,7 @@ steam.start() -- spawns the effect
 // Why the fuck did we not have this sooner.
 /proc/spark(var/atom/loc, var/amount = 3, var/cardinals = TRUE)
 	loc = get_turf(loc)
-	var/datum/effects/system/spark_spread/S = new
+	var/datum/effect/effect/system/spark_spread/S = new
 	S.set_up(amount, cardinals, loc)
 	S.start()
 
