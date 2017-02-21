@@ -15,7 +15,7 @@ var/global/list/cryo_health_indicator = list(	"full" = image("icon" = 'icons/obj
 	icon_state_open = "pod0_open"
 	density = 1
 	anchored = 1.0
-	layer = ABOVE_WINDOW_LAYER
+	layer = CRYO_CELL_BASE_LAYER
 	plane = OBJ_PLANE
 
 	var/on = 0
@@ -33,6 +33,21 @@ var/global/list/cryo_health_indicator = list(	"full" = image("icon" = 'icons/obj
 	light_range_on = 1
 	light_power_on = 2
 	use_auto_lights = 1
+
+	appearance_flags = KEEP_TOGETHER | TILE_BOUND
+
+	// To fix the things sticking out, we hit them with a blend subtract cutter.
+	// And then the pixels turn black.
+	// This matrix removes those black pixels.
+	// IF YOU WANT TO MAKE ANY PART OF THE OBJECT TRANSPARENT THIS WILL FUCK YOU UP.
+	// SO FIGURE IT OUT YOURSELF FUTURE SPRITERS.
+	/*color = list(
+		1, 0, 0, 10000,
+		0, 1, 0, 10000,
+		0, 0, 1, 10000,
+		0, 0, 0, 0,
+		0, 0, 0, 0
+	)*/
 
 /obj/machinery/atmospherics/unary/cryo_cell/New()
 	. = ..()
@@ -389,16 +404,25 @@ var/global/list/cryo_health_indicator = list(	"full" = image("icon" = 'icons/obj
 		icon_state = "pod[on]"
 
 	if(!src.occupant)
-		overlays += "lid[on]" //if no occupant, just put the lid overlay on, and ignore the rest
+		var/image/lid = image(icon, "lid[on]")
+		lid.layer = CRYO_CELL_LID_LAYER
+		overlays += lid //if no occupant, just put the lid overlay on, and ignore the rest
 		return
 
 	if(occupant)
 		var/image/pickle = image(occupant.icon, occupant.icon_state)
+		pickle.layer = CRYO_CELL_BOB_LAYER
 		pickle.overlays = occupant.overlays
 		pickle.pixel_y = 20
 
 		overlays += pickle
-		overlays += "lid[on]"
+		var/image/lid = image(icon, "lid[on]")
+		lid.layer = CRYO_CELL_LID_LAYER
+		overlays += lid
+		var/image/cut = image(icon, "pod_cut")
+		cut.blend_mode = BLEND_SUBTRACT
+		cut.layer = CRYO_CELL_CUT_LAYER
+		overlays += cut
 		if(src.on && !running_bob_animation) //no bobbing if off
 			var/up = 0 //used to see if we are going up or down, 1 is down, 2 is up
 			spawn(0) // Without this, the icon update will block. The new thread will die once the occupant leaves.
@@ -426,7 +450,9 @@ var/global/list/cryo_health_indicator = list(	"full" = image("icon" = 'icons/obj
 
 					pickle.overlays = occupant.overlays // We sync
 					overlays += pickle //re-add the mob to the icon
-					overlays += "lid[on]" //re-add the overlay of the pod, they are inside it, not floating
+					lid.icon_state = "lid[on]"
+					overlays += lid //re-add the overlay of the pod, they are inside it, not floating
+					overlays += cut
 
 					if(occupant.stat == DEAD || !occupant.has_brain())
 						overlays += cryo_health_indicator["dead"]

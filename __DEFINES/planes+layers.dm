@@ -129,7 +129,12 @@ What is the naming convention for planes or layers?
 	#define BELOW_CLOSED_DOOR_LAYER	10
 	#define CLOSED_DOOR_LAYER  		11
 	#define ABOVE_DOOR_LAYER		12
-	#define CHAIR_LEG_LAYER			13
+	#define CRYO_CELL_BASE_LAYER    13
+	#define CRYO_CELL_BOB_LAYER     14
+	#define CRYO_CELL_CUT_LAYER     15
+	#define CRYO_CELL_LID_LAYER     16
+	#define CRYO_CELL_HEALTH_LAYER  17
+	#define CHAIR_LEG_LAYER			18
 
 #define LYING_MOB_PLANE			-14			// other mobs that are lying down.
 
