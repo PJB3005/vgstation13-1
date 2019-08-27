@@ -1,4 +1,3 @@
-#pretending we're C because otherwise ruby/rvm will initialize, even with "language: dm".
 language: rust
 rust:
 - stable
@@ -10,7 +9,6 @@ env:
   - BYOND_MINOR="1453"
   - ALL_MAPS="tgstation metaclub defficiency packedstation roidstation bagelstation test_box test_tiny"
   - RUST_BACKTRACE="1"
-  - RUST_TEST_THREADS=1
   matrix:
   - DM_UNIT_TESTS="1"
   - DM_UNIT_TESTS="0"
@@ -43,8 +41,7 @@ script:
 - python tools/changelog/ss13_genchangelog.py html/changelog.html html/changelogs --dry-run
 - source $HOME/BYOND-${BYOND_MAJOR}.${BYOND_MINOR}/byond/bin/byondsetup
 - cd libvg
-# --jobs 1 to prevent threading problems with the BYOND crate.
-- cargo test --jobs 1 --verbose
+- cargo test --verbose
 - cd -
 - tools/travis/build.py
 - cp tools/travis/config/config.txt config/

@@ -1,22 +1,23 @@
+use byond::byond;
 use byond::call::return_to_byond;
-use encoding::all::{WINDOWS_1252, ASCII, GB18030};
-use encoding::Encoding;
+use encoding::all::{ASCII, GB18030, WINDOWS_1252};
 use encoding::label::encoding_from_windows_code_page;
 use encoding::types::DecoderTrap;
-use libc;
+use encoding::Encoding;
 use std::cmp::{max, Ordering};
 use std::ffi::CStr;
-use std::slice;
+use std::os::raw::{c_char, c_int};
 use std::ptr::null;
+use std::slice;
 
 // Encodes a byte string to UTF-8, using the encoding supplied.
 //
 // Arguments are in the order of encoding, bytes.
 #[no_mangle]
-pub extern "C" fn to_utf8(n: libc::c_int, v: *const *const libc::c_char) -> *const libc::c_char {
+pub unsafe extern "C" fn to_utf8(n: c_int, v: *const *const c_char) -> *const c_char {
     // We do not let the byond crate handle arguments, as we want BYTES directly.
     // Unicode decode could fail on the second argument.
-    let text = unsafe {
+    let text = {
         let slice = slice::from_raw_parts(v, n as usize);
 
         decode(&slice)
@@ -30,12 +31,9 @@ pub extern "C" fn to_utf8(n: libc::c_int, v: *const *const libc::c_char) -> *con
 // Operations like message length are done on Unicode code points!
 // Arguments are in the order of encoding, bytes, cap.
 #[no_mangle]
-pub extern "C" fn utf8_sanitize(
-    n: libc::c_int,
-    v: *const *const libc::c_char,
-) -> *const libc::c_char {
+pub unsafe extern "C" fn utf8_sanitize(n: c_int, v: *const *const c_char) -> *const c_char {
     // Can't use the BYOND crate again because of unicode conversion failing.
-    let text = unsafe {
+    let text = {
         let slice = slice::from_raw_parts(v, n as usize);
         let cap = CStr::from_ptr(slice[2])
             .to_str()
@@ -50,11 +48,8 @@ pub extern "C" fn utf8_sanitize(
 
 // Removes non-ASCII characters from the input string.
 #[no_mangle]
-pub extern "C" fn strict_ascii(
-    n: libc::c_int,
-    v: *const *const libc::c_char,
-) -> *const libc::c_char {
-    let bytes = unsafe {
+pub unsafe extern "C" fn strict_ascii(n: c_int, v: *const *const c_char) -> *const c_char {
+    let bytes = {
         let slice = slice::from_raw_parts(v, n as usize);
         CStr::from_ptr(slice[0]).to_bytes()
     };
@@ -77,7 +72,7 @@ byond!(utf8_len_bytes: text; {
 byond!(utf8_find: haystack, needle, start, end; {
     match byte_bounds(haystack, start, end) {
         Some((start, end)) => {
-            let ref sub = haystack[start .. end];
+            let sub = &haystack[start .. end];
             match sub.find(needle) {
                 Some(index) => format!("{}",
                     haystack
@@ -112,7 +107,7 @@ byond!(utf8_index: text, index; {
         None => return ""
     };
 
-    &text[byte .. iter.next().map(|(i, _)| i).unwrap_or(text.len())]
+    &text[byte .. iter.next().map(|(i, _)| i).unwrap_or_else(|| text.len())]
 });
 
 byond!(utf8_copy: text, start, end; {
@@ -178,7 +173,7 @@ byond!(utf8_leftpad: text, amount, with; {
 });
 
 byond!(utf8_is_whitespace: string; {
-    match string.chars().all(|c| c.is_whitespace()) { true => "1", false => "0" }
+    if string.chars().all(|c| c.is_whitespace()) { "1" } else { "0" }
 });
 
 byond!(utf8_trim: string; {
@@ -226,13 +221,13 @@ pub(crate) fn byte_bounds(text: &str, start: &str, end: &str) -> Option<(usize, 
 }
 
 /// See utf8.dm for what the codes correspond to.
-pub(crate) unsafe fn decode(args: &[*const libc::c_char]) -> String {
+pub(crate) unsafe fn decode(args: &[*const c_char]) -> String {
     let bytes = CStr::from_ptr(args[1]).to_bytes();
     CStr::from_ptr(args[0])
         .to_str()
         .map(|e| e.parse::<usize>().unwrap_or(1252))
         .map(|e| match e {
-            e @ 874 | e @ 1250...1258 => encoding_from_windows_code_page(e).unwrap_or(WINDOWS_1252),
+            e @ 874 | e @ 1250..=1258 => encoding_from_windows_code_page(e).unwrap_or(WINDOWS_1252),
             2312 => GB18030,
             _ => WINDOWS_1252,
         })
@@ -246,8 +241,7 @@ pub(crate) fn sanitize(text: &str, cap: usize) -> String {
     let mut count = 0;
     for character in text.chars() {
         match character {
-            '\u{0000}'...'\u{001F}' |
-            '\u{0080}'...'\u{00A0}' => continue,
+            '\u{0000}'..='\u{001F}' | '\u{0080}'..='\u{00A0}' => continue,
             '<' => out.push_str("&lt;"),
             '>' => out.push_str("&gt;"),
             _ => out.push(character),
@@ -289,13 +283,11 @@ mod tests {
 
         unsafe { assert_eq!(decode(&both), "Hi there!") };
 
-
         let encoding = CString::new(b"1252".as_ref()).unwrap();
         let test = CString::new(b"H\xed th\xe9r\xe9!".as_ref()).unwrap();
         let both = [encoding.as_ptr(), test.as_ptr()];
 
         unsafe { assert_eq!(decode(&both), "Hí théré!") };
-
 
         let encoding = CString::new(b"1251".as_ref()).unwrap();
         let both = [encoding.as_ptr(), test.as_ptr()];
