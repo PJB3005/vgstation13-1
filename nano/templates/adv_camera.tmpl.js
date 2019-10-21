@@ -1,0 +1,1 @@
+NanoTemplate.preloadTemplate("adv_camera.tmpl", "<!-- \nTitle: advanced camera UI\nUsed In File(s): /code/game/machinery/computer/adv_camera.dm\n-->\n");
