@@ -1566,10 +1566,10 @@
 		return
 	if(usr.stat != 0 || (usr.status_flags & FAKEDEATH))
 		return
-	var/datum/topic_input/filter = new /datum/topic_input(href,href_list)
+	var/datum/topic_input/_filter = new /datum/topic_input(href,href_list)
 	if(href_list["select_equip"])
 		if(usr != src.occupant)	return
-		var/obj/item/mecha_parts/mecha_equipment/equip = filter.getObj("select_equip")
+		var/obj/item/mecha_parts/mecha_equipment/equip = _filter.getObj("select_equip")
 		if(equip)
 			src.selected = equip
 			src.occupant_message("You switch to [equip]")
@@ -1600,7 +1600,7 @@
 		return
 	if(href_list["rfreq"])
 		if(usr != src.occupant)	return
-		var/new_frequency = (radio.frequency + filter.getNum("rfreq"))
+		var/new_frequency = (radio.frequency + _filter.getNum("rfreq"))
 		if (!radio.freerange || (radio.frequency < 1200 || radio.frequency > 1600))
 			new_frequency = sanitize_frequency(new_frequency)
 		radio.set_frequency(new_frequency)
@@ -1642,11 +1642,11 @@
 		return
 	if(href_list["req_access"] && add_req_access)
 		if(!in_range(src, usr))	return
-		output_access_dialog(filter.getObj("id_card"),filter.getMob("user"))
+		output_access_dialog(_filter.getObj("id_card"),_filter.getMob("user"))
 		return
 	if(href_list["maint_access"] && maint_access)
 		if(!in_range(src, usr))	return
-		var/mob/user = filter.getMob("user")
+		var/mob/user = _filter.getMob("user")
 		if(user)
 			if(state==STATE_BOLTSHIDDEN)
 				state = STATE_BOLTSEXPOSED
@@ -1664,30 +1664,30 @@
 					occupant << sound('sound/mecha/mechentry.ogg',wait=0)
 			else
 				user << "You can't toggle maintenance mode with the securing bolts unfastened."
-			output_maintenance_dialog(filter.getObj("id_card"),user)
+			output_maintenance_dialog(_filter.getObj("id_card"),user)
 		return
 	if(href_list["set_internal_tank_valve"] && state >=STATE_BOLTSEXPOSED)
 		if(!in_range(src, usr))	return
-		var/mob/user = filter.getMob("user")
+		var/mob/user = _filter.getMob("user")
 		if(user)
 			var/new_pressure = input(user,"Input new output pressure","Pressure setting",internal_tank_valve) as num
 			if(new_pressure)
 				internal_tank_valve = new_pressure
 				user << "The internal pressure valve has been set to [internal_tank_valve]kPa."
-	if(href_list["add_req_access"] && add_req_access && filter.getObj("id_card"))
+	if(href_list["add_req_access"] && add_req_access && _filter.getObj("id_card"))
 		if(!in_range(src, usr))	return
-		operation_req_access += filter.getNum("add_req_access")
-		output_access_dialog(filter.getObj("id_card"),filter.getMob("user"))
+		operation_req_access += _filter.getNum("add_req_access")
+		output_access_dialog(_filter.getObj("id_card"),_filter.getMob("user"))
 		return
-	if(href_list["del_req_access"] && add_req_access && filter.getObj("id_card"))
+	if(href_list["del_req_access"] && add_req_access && _filter.getObj("id_card"))
 		if(!in_range(src, usr))	return
-		operation_req_access -= filter.getNum("del_req_access")
-		output_access_dialog(filter.getObj("id_card"),filter.getMob("user"))
+		operation_req_access -= _filter.getNum("del_req_access")
+		output_access_dialog(_filter.getObj("id_card"),_filter.getMob("user"))
 		return
 	if(href_list["finish_req_access"])
 		if(!in_range(src, usr))	return
 		add_req_access = 0
-		var/mob/user = filter.getMob("user")
+		var/mob/user = _filter.getMob("user")
 		user << browse(null,"window=exosuit_add_access")
 		return
 	if(href_list["dna_lock"])

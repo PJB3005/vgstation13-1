@@ -53,13 +53,13 @@
 	disabilities=EPILEPSY|COUGHING
 	mutations = list(M_CLUMSY)
 
-	var/datum/speech_filter/filter
+	var/datum/speech_filter/_filter
 
 /mob/living/simple_animal/hostile/retaliate/cluwne/New()
 	..()
 	// Set up wordfilter
-	filter = new
-	filter.addPickReplacement("\b(asshole|comdom|shitter|shitler|retard|dipshit|dipshit|greyshirt|nigger|security|shitcurity)", list(
+	_filter = new
+	_filter.addPickReplacement("\b(asshole|comdom|shitter|shitler|retard|dipshit|dipshit|greyshirt|nigger|security|shitcurity)", list(
 		"honker",
 		"fun police",
 		"unfun",
@@ -67,16 +67,16 @@
 	// HELP THEY'RE KILLING ME
 	// FINALLY THEY'RE TICKLING ME
 	var/tickle_prefixes="\b(kill+|murder|beat|wound|hurt|harm)"
-	filter.addReplacement("[tickle_prefixes]ing","tickling")
-	filter.addReplacement("[tickle_prefixes]ed", "tickled")
-	filter.addReplacement(tickle_prefixes,       "tickle")
+	_filter.addReplacement("[tickle_prefixes]ing","tickling")
+	_filter.addReplacement("[tickle_prefixes]ed", "tickled")
+	_filter.addReplacement(tickle_prefixes,       "tickle")
 
-	filter.addReplacement("^h\[aei\]lp.*","END THE SHOW")
-	filter.addReplacement("h\[aei\]lp\\s+me","end my show")
-	filter.addReplacement("h\[aei\]lp\\s+him","end his show")
-	filter.addReplacement("h\[aei\]lp\\s+her","end her show")
-	filter.addReplacement("h\[aei\]lp\\s+them","end their show")
-	filter.addReplacement("h\[aei\]lp\\s+(\[^\\s\]+)","end $1's show")
+	_filter.addReplacement("^h\[aei\]lp.*","END THE SHOW")
+	_filter.addReplacement("h\[aei\]lp\\s+me","end my show")
+	_filter.addReplacement("h\[aei\]lp\\s+him","end his show")
+	_filter.addReplacement("h\[aei\]lp\\s+her","end her show")
+	_filter.addReplacement("h\[aei\]lp\\s+them","end their show")
+	_filter.addReplacement("h\[aei\]lp\\s+(\[^\\s\]+)","end $1's show")
 
 /*
 	var/stance = CLOWN_STANCE_IDLE	//Used to determine behavior
@@ -273,7 +273,7 @@
 	..()
 
 /mob/living/simple_animal/hostile/retaliate/cluwne/say(var/message)
-	message = filter.FilterSpeech(lowertext(message))
+	message = _filter.FilterSpeech(lowertext(message))
 	var/list/temp_message = text2list(message, " ") //List each word in the message
 	// Stolen from peirrot's throat
 	for(var/i=1, (i <= temp_message.len), i++) //Loop for each stage of the disease or until we run out of words

@@ -150,9 +150,9 @@
 
 /obj/item/mecha_parts/mecha_equipment/tool/jail/Topic(href,href_list)
 	..()
-	var/datum/topic_input/filter = new /datum/topic_input(href,href_list)
+	var/datum/topic_input/ifilter = new /datum/topic_input(href,href_list)
 	for(var/cell in cells)
-		if(filter.get("eject[cell]"))
+		if(ifilter.get("eject[cell]"))
 			go_out(cells[cell])
 	return
 

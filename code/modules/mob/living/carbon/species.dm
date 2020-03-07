@@ -421,14 +421,14 @@ var/global/list/whitelisted_species = list("Human")
 
 	flesh_color = "#AFA59E"
 
-	var/datum/speech_filter/filter = new
+	var/datum/speech_filter/ifilter = new
 
 /datum/species/tajaran/New()
 	// Combining all the worst shit the world has ever offered.
 
 	// Note: Comes BEFORE other stuff.
 	// Trying to remember all the stupid fucking furry memes is hard
-	filter.addPickReplacement("\b(asshole|comdom|shitter|shitler|retard|dipshit|dipshit|greyshirt|nigger)",
+	ifilter.addPickReplacement("\b(asshole|comdom|shitter|shitler|retard|dipshit|dipshit|greyshirt|nigger)",
 		list(
 			"silly rabbit",
 			"sandwich", // won't work too well with plurals OH WELL
@@ -436,14 +436,14 @@ var/global/list/whitelisted_species = list("Human")
 			"party pooper"
 		)
 	)
-	filter.addWordReplacement("me","meow")
-	filter.addWordReplacement("I","meow") // Should replace with player's first name.
-	filter.addReplacement("fuck","yiff")
-	filter.addReplacement("shit","scat")
-	filter.addReplacement("scratch","scritch")
-	filter.addWordReplacement("(help|assist)\\bmeow","kill meow") // help me(ow) -> kill meow
-	filter.addReplacement("god","gosh")
-	filter.addWordReplacement("(ass|butt)", "rump")
+	ifilter.addWordReplacement("me","meow")
+	ifilter.addWordReplacement("I","meow") // Should replace with player's first name.
+	ifilter.addReplacement("fuck","yiff")
+	ifilter.addReplacement("shit","scat")
+	ifilter.addReplacement("scratch","scritch")
+	ifilter.addWordReplacement("(help|assist)\\bmeow","kill meow") // help me(ow) -> kill meow
+	ifilter.addReplacement("god","gosh")
+	ifilter.addWordReplacement("(ass|butt)", "rump")
 
 /datum/species/tajaran/handle_speech(message, mob/living/carbon/human/H)
 	if (prob(15))
@@ -456,7 +456,7 @@ var/global/list/whitelisted_species = list("Human")
 
 		return ..(message, H)
 
-	return ..(filter.FilterSpeech(message), H)
+	return ..(ifilter.FilterSpeech(message), H)
 
 /datum/species/grey // /vg/
 	name = "Grey"

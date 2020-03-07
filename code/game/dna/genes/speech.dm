@@ -40,7 +40,7 @@
 #undef ACT_REPLACE
 
 /datum/speech_filter_action
-	var/regex/expr
+	var/_regex/expr
 	var/str_expr
 	var/broken = 0
 

@@ -1,3 +1,4 @@
+/*
 mob/verb/Search(t as text,p as text)
 	if(!t || !p) return
 	var/regex/rp = new(p)
@@ -65,3 +66,4 @@ proc/double(n)
 proc/sum(a,b)
 	world << "sum(\"[a]\",\"[b]\")"
 	return text2num(a)+text2num(b)
+*/

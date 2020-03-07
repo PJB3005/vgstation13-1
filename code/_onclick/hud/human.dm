@@ -402,6 +402,7 @@
 	mymob.blind.screen_loc = "1,1"
 	mymob.blind.mouse_opacity = 0
 	mymob.blind.layer = 0
+	mymob.blind.invisibility = 101
 
 	mymob.damageoverlay = getFromPool(/obj/screen)
 	mymob.damageoverlay.icon = 'icons/mob/screen1_full.dmi'

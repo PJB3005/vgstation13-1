@@ -87,17 +87,17 @@ var/list
 	regex_classtrans=list("0-9","a-z","\\x1- ","A-Z","0-9A-Za-z")
 	regex_classinv=list("\\x1-/:-\\xFF","\\x1-`{-\\xFF","!-\\xFF","\\x1-@\[\\xFF","\\x1-/:-@\[-`{-\\xFF")
 
-regex
+/_regex
 	/*
 		This single-linked list format means that when the parent expression
 		is no longer referenced, its linked datums will also be deleted.
 		No fuss, no muss!
 	 */
-	var/regex/next		// next sequential subpattern
-	var/regex/nextup	// next sequential subpattern from parent group (or higher)
-	var/regex/child		// child subpattern
-	var/regex/option	// after compiling this will point to another optional subpattern
-	var/regex/replace	// replacement pattern
+	var/_regex/next		// next sequential subpattern
+	var/_regex/nextup	// next sequential subpattern from parent group (or higher)
+	var/_regex/child		// child subpattern
+	var/_regex/option	// after compiling this will point to another optional subpattern
+	var/_regex/replace	// replacement pattern
 	/*
 		Overall structure (excluding nextup)
 
@@ -161,7 +161,7 @@ regex
 	var/tmp/match	// beginning of match
 	var/tmp/index	// parsing index or end of match
 
-	New(regex/p,s=1,regex/first,regex/last)
+	New(_regex/p,s=1,_regex/first,_regex/last)
 		var/endchar=0
 		start=s
 		if(!first)
@@ -445,7 +445,7 @@ regex
 		if(first==src) CompileBlocks()
 
 	// return src on failure; null for success
-	proc/ParseCharClass(regex/first)
+	proc/ParseCharClass(_regex/first)
 		var/i,ch,ch2
 		var/lastch=0,rangechar=0
 		var/s=index
@@ -484,7 +484,7 @@ regex
 		// ] not encountered
 		return MarkError(first,index,"Expected ",93)
 
-	proc/BreakOff(p,regex/first)
+	proc/BreakOff(p,_regex/first)
 		next=new(p,--index,first,src)
 		if(!first.error && first==src) CompileBlocks()
 		return src		// this proc is used to escape New() with a return
@@ -504,7 +504,7 @@ regex
 			.=1; if(++index>=end) break
 			chn=text2ascii(pattern,index)
 
-	proc/MarkError(regex/first,i,msg,ch)
+	proc/MarkError(_regex/first,i,msg,ch)
 		first.error=copytext(pattern,1,i)+"  <-- [msg]"
 		if(!isnull(ch))
 			if(!ch) first.error+=" [copytext(pattern,length(pattern))]"
@@ -622,8 +622,8 @@ regex
 		pattern=L
 
 	// call this after CompileOptions()
-	proc/CompileBlocks(regex/follow,regex/first,rep,regex/parent)
-		var/regex{o;p}
+	proc/CompileBlocks(_regex/follow,_regex/first,rep,_regex/parent)
+		var/_regex{o;p}
 		var/ch,ch2
 		if(!first)
 			if(ptype) return		// already compiled
@@ -715,7 +715,7 @@ regex
 			if(3) .="\[^[pattern]\]"
 			if(4)
 				.="("
-				var/regex/p
+				var/_regex/p
 				for(p=child,p,p=p.next) .+="[p.TrueBlock()]"
 				.+=")"
 			if(8) .="."
@@ -743,7 +743,7 @@ regex
 		stop:		Don't find a match starting after this point (0=don't care)
 		anyline:	In default line mode, allow pattern to begin on any line
 	 */
-	proc/Find(txt,start=1,regex/first,stop,anyline)
+	proc/Find(txt,start=1,_regex/first,stop,anyline)
 		var/i,e,ee
 		var/isfirst
 		if(!first)
@@ -766,7 +766,7 @@ regex
 		return i
 
 	// find the last possible case of a pattern, with stop as the last possible choice
-	proc/FindLast(txt,start=1,regex/first,stop,anyline)
+	proc/FindLast(txt,start=1,_regex/first,stop,anyline)
 		var/i,e,ee
 		var/isfirst
 		if(!first)
@@ -794,14 +794,14 @@ regex
 			first.index=src.FoundTo()
 		return i
 
-	proc/FindHere(txt,start=1,regex/first,nonzero)
+	proc/FindHere(txt,start=1,_regex/first,nonzero)
 		if(!first) first=src
 		var/i,j,k,ch,ch2,times,maxtimes
 		i=start
-		var/regex/o=option
+		var/_regex/o=option
 		var/ee=length(txt)+1
 		var/e=(start>=ee || (first.flags&2))?(ee):(findtextEx(txt,"\n",start)||ee)
-		var/regex/after
+		var/_regex/after
 		while(src)
 			REGEX_DEBUG("FindHere([TrueBlock()]) ([start],[e]/[ee]) ([ptype])")
 			sleep()
@@ -953,14 +953,14 @@ regex
 				times=j-i;i=j
 			goto done
 
-	proc/FirstPossible(txt,start=1,regex/first,stop,anyline)
+	proc/FirstPossible(txt,start=1,_regex/first,stop,anyline)
 		var/i,j,k,ch,ch2
 		var/ee=length(txt)+1
 		var/e=(start>=ee || (first.flags&2))?(ee):(findtextEx(txt,"\n",start)||ee)
 		if(!stop) stop=ee
-		var/regex/after
+		var/_regex/after
 		.=0
-		for(var/regex/p=src,p,p=p.option)
+		for(var/_regex/p=src,p,p=p.option)
 			i=start
 			REGEX_DEBUG("FirstPossible([TrueBlock()]) ([start],[e]/[ee]) ([ptype])")
 			sleep()
@@ -1074,10 +1074,10 @@ regex
 		if(g<1 || g>groups.len) return
 		return groups[groups[g]]
 
-	proc/ReplacementText(txt,regex/first)
+	proc/ReplacementText(txt,_regex/first)
 		.=""
 		if(!first) first=src
-		var/regex/p
+		var/_regex/p
 		for(p=(replace||src),p,p=p.next)
 			switch(p.ptype)
 				if(1)
@@ -1089,7 +1089,7 @@ regex
 					var/procname=p.child.pattern
 					if(p.child.next && p.child.next.child)
 						var/list/procargs=new
-						for(var/regex/q=p.child.next.child,q,q=q.option)
+						for(var/_regex/q=p.child.next.child,q,q=q.option)
 							procargs += q.ReplacementText(txt,first)
 						.+="[call(text2path("/proc/[procname]"))(arglist(procargs))]"
 					else
@@ -1117,7 +1117,7 @@ regex
 	proc/FoundTo()
 		while(!start && option) src=option
 		if(!start) return 0
-		var/regex/p
+		var/_regex/p
 		for(p=src,p,p=p.next)
 			end=p.end
 		return end
